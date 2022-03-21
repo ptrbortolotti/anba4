@@ -14,6 +14,10 @@ import os
 
 from anba4 import *
 
+from validation import validate_with_defaults
+
+input_data = validate_with_defaults('sandwichPanel.yaml', 'anba4_schema.yaml')
+
 ## Utility function to conveniently read various lines of text into lists, selecting certain data types
 def str2NumList(inStr,includeFloat=True,includeText=False):
     noCommas = inStr.replace(',',' ')
