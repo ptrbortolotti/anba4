@@ -268,9 +268,6 @@ class anbax:
         MM = assemble(Mf)
         M = as_backend_type(MM).mat()
         Mass = PETSc.Mat()  # .createDense([6, 6])
-        # Mass.setUp()
-        # Mass.view()
-        # M.copy(Mass, PETSc.Mat.Structure.DIFFERENT_NONZERO_PATTERN)
         M.convert("dense", Mass)
         return Mass
 
@@ -349,15 +346,6 @@ class anbax:
                 )
                 maxres = max(maxres, sqrt(tmp.inner(tmp)))
 
-            #        if maxres > 1.E-16:
-            #            scaling_factor = 1.E-16 / maxres;
-            #        else:
-            #            scaling_factor = 1.
-
-            #        for i in range(4):
-            #            self.chains[i][0].vector()[:] = self.chains[i][0].vector() * scaling_factor
-            #        for i in [2, 3]:
-            #            self.chains[i][1].vector()[:] = self.chains[i][1].vector() * scaling_factor
             for i in range(4):
                 tmp = E * self.chains[i][0].vector()
                 maxres = max(maxres, sqrt(tmp.inner(tmp)))
@@ -429,7 +417,6 @@ class anbax:
             # len=2 range(1,0,-1) -> k = 1 len()-1-k len()-k
             # len=4 range(2,0,-1) -> k = 2 len()-1-k=1 len()-k=2
             #                        k = 1 len()-1-k=2 len()-k=3
-
             for i in range(4):
                 ll = len(self.chains[i])
                 for k in range(ll // 2, 0, -1):
@@ -612,15 +599,6 @@ class anbax:
                 )
                 maxres = max(maxres, sqrt(tmp.inner(tmp)))
 
-            #            if maxres > 1.E-16:
-            #                scaling_factor = 1.E-16 / maxres;
-            #            else:
-            #                scaling_factor = 1.
-
-            #            for i in range(4):
-            #                self.chains[i][0].vector()[:] = self.chains[i][0].vector() * scaling_factor
-            #            for i in [2, 3]:
-            #                self.chains[i][1].vector()[:] = self.chains[i][1].vector() * scaling_factor
             for i in range(4):
                 tmp = self.E * self.chains[i][0].vector()
                 maxres = max(maxres, sqrt(tmp.inner(tmp)))
@@ -638,9 +616,6 @@ class anbax:
                 print("Solving ", i)
                 solver.solve(self.E, self.chains[i][1].vector(), self.b.vector())
                 self.null_space.orthogonalize(self.chains[i][1].vector())
-                #                for k in range(4):
-                #                    c = (self.chains[i][1].vector().inner(self.chains[k][0].vector())) / (self.chains[k][0].vector().inner(self.chains[k][0].vector()))
-                #                    self.chains[i][1].vector()[:] -= c * self.chains[k][0].vector()
                 res = -(self.H * self.chains[i][1].vector()) + (
                     self.M * self.chains[i][0].vector()
                 )
@@ -930,9 +905,8 @@ class anbax:
         ksp = PETSc.KSP()
         ksp.create()
         ksp.setOperators(self.B)
-        ksp.setType(
-            ksp.Type.PREONLY
-        )  # Just use the preconditioner without a Krylov method
+        # Just use the preconditioner without a Krylov method
+        ksp.setType(ksp.Type.PREONLY)
         pc = ksp.getPC()  # Preconditioner
         pc.setType(pc.Type.LU)  # Use a direct solve
 
@@ -972,8 +946,6 @@ class anbax:
             self.STRESS,
         )
 
-    #        self.local_project(stress_comp(self.U, self.UP), self.STRESS.ufl_function_space(), self.STRESS)
-
     def strain_field(self, force, moment, reference="local", voigt_convention="anba"):
         if reference == "local":
             strain_comp = self.rotated_epsilon
@@ -1008,9 +980,8 @@ class anbax:
         ksp = PETSc.KSP()
         ksp.create()
         ksp.setOperators(self.B)
-        ksp.setType(
-            ksp.Type.PREONLY
-        )  # Just use the preconditioner without a Krylov method
+        # Just use the preconditioner without a Krylov method
+        ksp.setType(ksp.Type.PREONLY)
         pc = ksp.getPC()  # Preconditioner
         pc.setType(pc.Type.LU)  # Use a direct solve
         ksp.solve(AzInt, eigensol_magnitudes)
@@ -1048,6 +1019,3 @@ class anbax:
             self.STRAIN.ufl_function_space(),
             self.STRAIN,
         )
-
-
-#        self.local_project(stress_comp(self.U, self.UP), self.STRESS.ufl_function_space(), self.STRESS)
