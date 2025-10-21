@@ -14,10 +14,21 @@ def main():
     model = load_model_from_json(args.input)
 
     # Translate to Dolfin
-    mesh, matLibrary, materials, plane_orientations, fiber_orientations = model_to_dolfin(model)
+    mesh, matLibrary, materials, plane_orientations, fiber_orientations = (
+        model_to_dolfin(model)
+    )
 
     # Run anba
-    anba = anbax(mesh, model.degree, matLibrary, materials, plane_orientations, fiber_orientations, scaling_constraint=model.scaling_constraint, singular=model.singular)
+    anba = anbax(
+        mesh,
+        model.degree,
+        matLibrary,
+        materials,
+        plane_orientations,
+        fiber_orientations,
+        scaling_constraint=model.scaling_constraint,
+        singular=model.singular,
+    )
     stiff = anba.compute()
     mass = anba.inertia()
 
@@ -38,11 +49,11 @@ def main():
         principle_axis_orientation=angle,
         shear_center_location=shear_center,
         mass_center_location=mass_center,
-        tension_elastic_center_location=tension_center
+        tension_elastic_center_location=tension_center,
     )
 
     # Write to output JSON
-    with open(args.output, 'w') as f:
+    with open(args.output, "w") as f:
         json.dump(output.model_dump(), f)
 
 
