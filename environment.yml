@@ -12,4 +12,3 @@ dependencies:
   - pytest
   - pytest-cov
   - setuptools<81
-  - sympy==1.5.1
