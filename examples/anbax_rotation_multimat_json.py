@@ -238,7 +238,7 @@ output = Output(
 
 # Write output to JSON
 with open('output.json', 'w') as f:
-    json.dump(output.dict(), f)
+    json.dump(output.model_dump(), f)
 
 stiff.view()
 
